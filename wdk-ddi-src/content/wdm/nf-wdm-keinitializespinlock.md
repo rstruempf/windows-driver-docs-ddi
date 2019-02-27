@@ -78,7 +78,9 @@ Storage for a spin lock object must be resident: in the device extension of a dr
 
 For more information about spin locks, see <a href="https://msdn.microsoft.com/library/windows/hardware/ff563830">Spin Locks</a>.
 
-Callers of this routine can be running at any IRQL. Usually, a caller is running at IRQL = PASSIVE_LEVEL in an <a href="https://msdn.microsoft.com/library/windows/hardware/ff540521">AddDevice</a> routine.
+Callers of this routine can be running at any IRQL <= DISPATCH_LEVEL. Usually, a caller is running at IRQL = PASSIVE_LEVEL in an <a href="https://msdn.microsoft.com/library/windows/hardware/ff540521">AddDevice</a> routine.
+
+Between acquiring a spinlock and releasing it, the IRQL is raised to DISPATCH_LEVEL (for executive spinlocks).  This generally doesn't affect usability, but may limit API access within the spinlock.  For example, most Unicode string related API calls and FltXyz() functions cannot be called while holding a spinlock.
 
 
 
